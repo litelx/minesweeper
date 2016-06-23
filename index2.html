@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Super Angular</title>
+    <script src="sheets/angular.js"></script>
+    <script src="sheets/app.js"></script>
+</head>
+<body>
+    <p>Angular is an MVC framework</p>
+
+    <div id="foo">
+        <input type="number" ng-model="x"> +
+
+        <input type="number" ng-model="y">
+
+        The name is {{ x + y }}
+        <br>
+        <div ng-if="(x+y)%2 == 0">KUKU1</div>
+        <div ng-if="(x+y)%2 == 1">AHA1</div>
+        <br>
+        <div ng-switch="(x+y)%2">
+            <div ng-switch-when="1">AHA2</div>
+            <div ng-switch-default="0">KUKU2</div>
+        </div>
+        <br>
+        <div ng-if="(x+y)%2 == 0 ? 'KUKU' : 'AHA'"></div>
+        <!--<div ng-show="u" ng-model="u = {0: 'KUKU', 1: 'AHA'}"></div>-->
+
+        <div>
+            <ul ng-init="factor=0.9; products = [
+            {name: 'apple', price: 10 },
+            {name: 'apple2', price: 20 },
+            {name: 'apple3', price: 30 },
+            ]"
+                >
+            <div>
+                <input type="text" ng-model="name">
+                <input type="number" ng-model="price">
+                <button ng-click="products.push({name:name, price:price});name='';price=''">Add</button>
+            </div>
+                <li ng-repeat="item in products">
+                    [{{ $index }}]
+                    {{item.name}}: ${{factor * item.price |number:2}}
+                    <button ng-click="products.splice($index, 1)">Delete</button>
+                </li>
+            Factor: <input type="number" stet="0.1" ng-model="factor"/>
+            </ul>
+        </div>
+
+
+
+    </div>
+</body>
+</html>

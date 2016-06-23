@@ -1,0 +1,26 @@
+.ng-scope {
+    border: 1px solid black;
+    padding: 2px;
+
+}
+td {
+    border: 2px solid black;
+    padding: 2px;
+    width: 30px;
+    height: 30px;
+    background: lightcyan;
+}
+td.n0
+{
+    background: #e0eeee;
+    color: #e0eeee;
+    border-width: 2px 2px 1px 1px;
+}
+td.n1{color: blue;}
+td.n2{color: green;}
+td.n3{color: red;}
+td.n4{color: black;}
+td.n5{color: darkred;}
+td.n6{color: greenyellow;}
+td.n7{color: purple;}
+td.n8{color: grey;}
