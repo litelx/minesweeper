@@ -3,24 +3,59 @@
     padding: 2px;
 
 }
-td {
+td.cells {
     border: 2px solid black;
-    padding: 2px;
-    width: 30px;
-    height: 30px;
+    padding: 1px;
+    width: 25px;
+    height: 25px;
     background: lightcyan;
+}
+td.bomb{
+    background: orangered;
 }
 td.n0
 {
-    background: #e0eeee;
-    color: #e0eeee;
+    background: #e0eeaa;
+    color: #e0eeaa;
     border-width: 2px 2px 1px 1px;
 }
-td.n1{color: blue;}
-td.n2{color: green;}
-td.n3{color: red;}
-td.n4{color: black;}
-td.n5{color: darkred;}
-td.n6{color: greenyellow;}
-td.n7{color: purple;}
-td.n8{color: grey;}
+td.n1{
+    background: #e0eeee;
+    color: blue;
+    border-width: 2px 2px 1px 1px;
+}
+td.n2{
+    background: #e0eeee;
+    color: green;
+    border-width: 2px 2px 1px 1px;
+}
+td.n3{
+    background: #e0eeee;
+    color: red;
+    border-width: 2px 2px 1px 1px;
+}
+td.n4{
+    background: #e0eeee;
+    color: black;
+    border-width: 2px 2px 1px 1px;
+}
+td.n5{
+    background: #e0eeee;
+    color: darkred;
+    border-width: 2px 2px 1px 1px;
+}
+td.n6{
+    background: #e0eeee;
+    color: greenyellow;
+    border-width: 2px 2px 1px 1px;
+}
+td.n7{
+    background: #e0eeee;
+    color: purple;
+    border-width: 2px 2px 1px 1px;
+}
+td.n8{
+    background: #e0eeee;
+    color: grey;
+    border-width: 2px 2px 1px 1px;
+}

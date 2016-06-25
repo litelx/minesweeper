@@ -1,28 +1,132 @@
 "use strict";
 
 
-
 var mymod = angular.module("mymodule", []);
-//
-// mymod.run(function udi($rootScope) {
-//     $rootScope.x = "ROOT!";
-// });
 
+mymod.controller("CalcController", function CalcController($scope, $interval) {
+    var easy = {width: 8, height: 8, mines: 10};
+    var regular = {width: 16, height: 16, mines: 40};
+    var expert = {width: 30, height: 16, mines: 99};
+    const mines = 10;
+    var width = 8;
+    var height = 8;
+    $scope.remained_flags = mines;
+    var layout = [];
+    for (var i = 0; i < mines; i++) {
+        layout.push({mine: true, display: ''});
+    }
+    for (var i = 0; i < width * height - mines; i++) {
+        layout.push({mine: false, display: ''});
+    }
 
-mymod.controller("CalcController", function CalcController($scope) {
-    var east_layout = [
-        1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-    ];
-    var won = east_layout.length - 10;
+    shuffle(layout);
+
+    var won = width * height - mines;// easy_layout.length;
+    $scope.board = [];
+
+    while (layout.length > 0) {
+        $scope.board.push(layout.splice(0, width));
+    }
+
+    $scope.leftClick = function (row, col) {
+        if (won === 0 || won === -1) {
+            return;
+        }
+        var cell = $scope.board[row][col];
+
+        if (cell.flag) {
+            return;
+        }
+
+        if (cell.mine) {
+            for (var i = 0; i < $scope.board.length; i++) {
+                for (var j = 0; j < $scope.board[0].length; j++) {
+                    if ($scope.board[i][j].mine && !$scope.board[i][j].flag)
+                        $scope.board[i][j].bomb = true;
+                    if (!$scope.board[i][j].mine && $scope.board[i][j].flag) {
+                        $scope.board[i][j].flag = !$scope.board[i][j].flag;
+                        $scope.board[i][j].display = 'X';
+                        $scope.board[i][j].color = 'n3';
+                    }
+                }
+            }
+            cell.color = "bomb";
+            won = -1;
+            $scope.status = "GAME OVER!!!";
+        } else {
+            var num = mines_around(row, col, $scope.board.length, $scope.board[0].length, $scope.board);
+            cell.color = "n" + num;
+            if (num === 0) {
+                $scope.zeroes(row, col);
+            } else {
+                cell.display = num;
+                won--;
+            }
+        }
+
+        if (won === 0) {
+            $scope.status = "WON!!!";
+        }
+
+        // $scope.time = $interval.cancel();
+        // $scope.time = 0;
+        // $scope.time += $interval(function() {
+        //       $scope.time += Number(1);
+        //     }, 1000);
+
+    };
+
+    $scope.zeroes = function (row, col) {
+        if (!(row < $scope.board.length && row > -1 && col < $scope.board[0].length && col > -1)) {
+            return;
+        }
+        var cell = $scope.board[row][col];
+        if (cell.display !== "") {
+            return;
+        }
+        var o = mines_around(row, col, $scope.board.length, $scope.board[0].length, $scope.board);
+        cell.display = o;
+        won--;
+        cell.color = "n" + o;
+        if (o === 0) {
+            $scope.zeroes(row - 1, col - 1);
+            $scope.zeroes(row - 1, col);
+            $scope.zeroes(row - 1, col + 1);
+            $scope.zeroes(row, col - 1);
+            $scope.zeroes(row, col + 1);
+            $scope.zeroes(row + 1, col - 1);
+            $scope.zeroes(row + 1, col);
+            $scope.zeroes(row + 1, col + 1);
+        }
+    };
+
+    function mines_around(ln_index, cl_index, ln, cl, layout) {
+        var counter = 0;
+        for (var i = ln_index - 1; i <= ln_index + 1; i++) {
+            for (var j = cl_index - 1; j <= cl_index + 1; j++) {
+                if (i >= 0 && i < ln && j >= 0 && j < cl) {
+                    if (i === ln_index && j === cl_index) {
+                        continue;
+                    }
+                    if (layout[i][j].mine === true) {
+                        counter++;
+                    }
+                }
+            }
+        }
+        return counter;
+    }
+
+    $scope.rightClick = function (cell) {
+        if (cell.display !== "" || $scope.status) {
+            return;
+        }
+
+        // if there is a flag counter decrease else increase
+        $scope.remained_flags += (cell.flag === true) * 2 - 1;
+
+        cell.flag = !cell.flag;
+    };
 
     function shuffle(a) {
         var j, x, i;
@@ -33,109 +137,16 @@ mymod.controller("CalcController", function CalcController($scope) {
             a[j] = x;
         }
     }
-    shuffle(east_layout);
-
-    $scope.board = [];
-
-    for (var i = 0; i < east_layout.length; i++) {
-        var row = [];
-        for (var j = 0; j < 10; j++) {
-            if (east_layout[i] === 1){
-                row.push({mine: true, display: ''});
-            }
-            else {
-                row.push({mine: false, display: ''});
-            }
-            i++;
-        }
-        $scope.board.push(row);
-    }
-
-    $scope.ans = function (row, col) {
-        if (!$scope.board[row][col].flag) {
-            if ($scope.board[row][col].mine === true) {
-                $scope.board[row][col].bomb = true;
-                $("#won").append("GAME OVER!!!");
-
-            }
-            else {
-                var num = f(row, col, $scope.board.length, $scope.board[0].length, $scope.board);
-                if (num === 0) {
-                    $scope.zeroes(row, col);
-                    $scope.board[row][col].color = "n" + num;
-                }
-                else {
-                    $scope.board[row][col].display = num;
-                    $scope.board[row][col].color = "n" + num;
-                    won--;
-                }
-            }
-
-            $scope.zeroes = function (row, col) {
-                if (row < $scope.board.length && row > -1 && col < $scope.board[0].length && col > -1) {
-                    if ($scope.board[row][col].display === "") {
-                        var o = f(row, col, $scope.board.length, $scope.board[0].length, $scope.board);
-                        $scope.board[row][col].display = o;
-                        won--;
-                        $scope.board[row][col].color = "n" + o;
-                        if (o === 0) {
-                            $scope.zeroes(row - 1,  col - 1);
-                            $scope.zeroes(row - 1,  col);
-                            $scope.zeroes(row - 1,  col + 1);
-                            $scope.zeroes(row,      col - 1);
-                            $scope.zeroes(row,      col + 1);
-                            $scope.zeroes(row + 1,  col - 1);
-                            $scope.zeroes(row + 1,  col);
-                            $scope.zeroes(row + 1,  col + 1);
-                        }
-                    }
-                }
-            }
-        }
-        if (won === 0){
-            $("#won").append("WON!!!");
-        }
-    };
-    function f(ln_index, cl_index, ln, cl, layout) {
-                if(ln_index >= 0 && cl_index >= 0 && ln_index < ln && cl_index < cl) {
-                    var counter = 0;
-                    for (var i = ln_index - 1; i <= ln_index + 1; i++) {
-                        for (var j = cl_index - 1; j <= cl_index + 1; j++) {
-                            if (i >= 0 && i < ln && j >= 0 && j < cl) {
-                                if (i === ln_index && j === cl_index) {
-                                    continue;
-                                }
-                                if (layout[i][j].mine === true) {
-                                    counter++;
-                                }
-                            }
-                        }
-                    }
-                    return counter;
-                }
-                return -1;
-            }
-
-    $scope.right = function (row, col) {
-        if (!$scope.board[row][col].bomb && $scope.board[row][col].display === "" ) {
-            $scope.board[row][col].flag = !$scope.board[row][col].flag;
-            if ($scope.board[row][col].flag === true){
-                won--;
-            }
-            else {won++;}
-        }
-    };
 });
 
 
-
-mymod.directive('ngRightClick', function($parse) {
-    return function(scope, element, attrs) {
+mymod.directive('ngRightClick', function ($parse) {
+    return function (scope, element, attrs) {
         var fn = $parse(attrs.ngRightClick);
-        element.bind('contextmenu', function(event) {
-            scope.$apply(function() {
+        element.bind('contextmenu', function (event) {
+            scope.$apply(function () {
                 event.preventDefault();
-                fn(scope, {$event:event});
+                fn(scope, {$event: event});
             });
         });
     };

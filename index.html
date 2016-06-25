@@ -6,25 +6,31 @@
     <script src="sheets/angular.js"></script>
     <script src="sheets/app.js"></script>
     <script src="sheets/jquery-2.2.4.js"></script>
-    <!--<link rel="stylesheet" href="sheets/bootstrap.css" type="text/css">-->
+    <link rel="stylesheet" href="sheets/bootstrap.css" type="text/css">
     <link rel="stylesheet" href="sheets/cssCode.css" type="text/css">
 
 </head>
 <body>
-    <div class="container" id="foo">
-        <table ng-controller="CalcController">
-            <tr ng-repeat="row in board">
-                <td class="{{cell.color}}" ng-right-click="right($parent.$index,$index)" align="center" ng-click="ans($parent.$index,$index)" ng-repeat="cell in row">
-                    <img style="width: 25px; height: 25px;" src="http://goo.gl/NFzrmN" ng-show="cell.flag">
-                    <img style="width: 25px; height: 25px;" src="http://goo.gl/aNWLIh" ng-show="cell.bomb">
-                    {{cell.display}}
-                </td>
-            </tr>
-        </table>
-        <div >
-            <p id="won"></p>
-        </div>
+<div class="container" id="foo" ng-controller="CalcController">
+    <table>
+        <tr ng-repeat="row in board">
+            <td class="cells {{cell.color}}" ng-right-click="rightClick(cell)"
+                align="center"
+                ng-click="leftClick($parent.$index,$index)"
+                ng-repeat="cell in row">
+                <img style="width: 20px; height: 20px;" src="http://goo.gl/NFzrmN" ng-show="cell.flag">
+                <img style="width: 20px; height: 20px;" src="http://goo.gl/aNWLIh" ng-show="cell.bomb">
+                {{cell.display}}
+            </td>
+        </tr>
 
+    </table>
+    <div>
+        <p>remained flags: {{remained_flags}}</p>
+        <p>{{time}}</p>
+        <p>{{status}}</p>
     </div>
+
+</div>
 </body>
 </html>
